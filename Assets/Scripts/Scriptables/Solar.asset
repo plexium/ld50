@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf7d9abcc2d7ce846846186bc2ddf9bb, type: 3}
+  m_Name: Solar
+  m_EditorClassIdentifier: 
+  sprite: {fileID: 21300000, guid: 4e634d503cc42de49bebbb681a9a4e80, type: 3}
+  title: Solar
+  tile: {fileID: 11400000, guid: 4d02e1499ff5a6c49a36a3816e1e5460, type: 2}
+  wattProduction: 5
+  wattConsumption: 0
+  storage: 1
