@@ -16,12 +16,16 @@ public class UIBuildButton : MonoBehaviour
         get { return _building; } 
     }
 
-
     public Text textTitle;
     public Image imageIcon;
 
     public void OnClick()
     {
         ui.StartPlacing(_building);
+    }
+
+    public void Update()
+    {
+        GetComponent<Button>().interactable = (ui.world.metals >= _building.requiredMetals);
     }
 }

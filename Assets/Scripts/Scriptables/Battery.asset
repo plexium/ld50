@@ -18,3 +18,6 @@ MonoBehaviour:
   wattProduction: 0
   wattConsumption: 0
   storage: 50
+  requiredMetals: 10
+  producedMetals: 0
+  researchPoints: 10

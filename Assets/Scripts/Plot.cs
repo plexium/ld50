@@ -16,4 +16,8 @@ public class Plot
     {        
     }
 
+    public bool CanBuild()
+    {
+        return (usable == true && building == null);
+    }
 }

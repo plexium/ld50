@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Factory : MonoBehaviour
+public class SOFactory : MonoBehaviour
 {
     #region singleton
-    public static Factory I;
+    public static SOFactory I;
 
     void Awake()
     {

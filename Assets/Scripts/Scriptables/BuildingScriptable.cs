@@ -14,4 +14,5 @@ public class BuildingScriptable : ScriptableObject
     public int storage;
     public int requiredMetals;
     public int producedMetals;
+    public int researchPoints;
 }

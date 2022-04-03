@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cf7d9abcc2d7ce846846186bc2ddf9bb, type: 3}
-  m_Name: Wind
+  m_Name: Miner
   m_EditorClassIdentifier: 
-  sprite: {fileID: 21300000, guid: e6644696cf742ef469b44994dbdfac1e, type: 3}
-  title: Wind
-  tile: {fileID: 11400000, guid: 66adc086f08064c4c9e9992cb429fc0e, type: 2}
-  wattProduction: 3
-  wattConsumption: 0
-  storage: 1
-  requiredMetals: 1
-  producedMetals: 0
+  sprite: {fileID: 21300000, guid: 1f4378f9f6dcfc84d837591ee8d488f6, type: 3}
+  title: Miner
+  tile: {fileID: 11400000, guid: ff845ba767b1b4344a8f8d533cd5d992, type: 2}
+  wattProduction: 0
+  wattConsumption: 5
+  storage: 0
+  requiredMetals: 7
+  producedMetals: 1
