@@ -30,6 +30,9 @@ energy there is and sustain the travelers as long as possible.
 - [x] you can view the current output of the star
 - [x] you can view the current usage and storage of energy
 
+- last minute
+
+
 bonus 
 
 - show alert when batteries are draining

@@ -18,6 +18,7 @@ public class UIPlotDetailManager : MonoBehaviour
         {
             buildingIcon.sprite = _inspectingPlot.building.sprite;
             textPlotDescription.text = _inspectingPlot.building.title;
+            //textBuildingDetails.text = _inspectingPlot.building.description;
             textBuildingDetails.text = $"Energy Produced: {_inspectingPlot.building.wattProduction}kW\nEnergy Consumption: {_inspectingPlot.building.wattConsumption}kW\nStorage: {_inspectingPlot.building.storage}kW";
         }
         else

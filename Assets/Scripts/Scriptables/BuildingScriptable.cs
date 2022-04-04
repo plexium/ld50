@@ -9,6 +9,7 @@ public class BuildingScriptable : ScriptableObject
     public Sprite sprite;
     public string title;
     public Tile tile;
+    public string description;
     public int wattProduction;
     public int wattConsumption;
     public int storage;

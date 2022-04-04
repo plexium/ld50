@@ -45,6 +45,7 @@ public class UICursor : MonoBehaviour
         if (Input.GetMouseButtonDown(0) && overPlot != null && overPlot.CanBuild())
         {
             world.BuildBuildingOn(placingBuilding, overPlot);
+            uiManager.SetMessage($"Placed {placingBuilding.title} (-{placingBuilding.requiredMetals} metals)");
             EndPlacing();
         }
         else if (Input.GetMouseButtonDown(1))

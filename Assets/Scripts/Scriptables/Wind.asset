@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: Wind
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: e6644696cf742ef469b44994dbdfac1e, type: 3}
-  title: Wind
+  title: Wind Turbine
   tile: {fileID: 11400000, guid: 66adc086f08064c4c9e9992cb429fc0e, type: 2}
+  description: Generates 3kW and stores 1kW
   wattProduction: 3
   wattConsumption: 0
   storage: 1
   requiredMetals: 1
   producedMetals: 0
+  researchPoints: 0

@@ -9,6 +9,7 @@ public class World : MonoBehaviour
     public enum GameState
     {
         STARTING,
+        PAUSED,
         PLAYING,
         GAMEOVER
     }
@@ -18,15 +19,18 @@ public class World : MonoBehaviour
 
     public event Action OnBuildablesChange;
 
+    public UIManager ui;
+
     private int _sizeX = 16;
     private int _sizeY = 16;
-    private float _ageSpeed = 2f; //seconds
+    private float _ageSpeed = 1f; //seconds
     private float _mineSpeed = 2f; //seconds
     private float _dataMineSpeed = 2f; //seconds
     private Coroutine _worldUpdate;
     private Coroutine _minerUpdate;
     private Coroutine _dataMineUpdate;
 
+    public int bufferYears = 10;
     public int years;
     public int starOutput;
     public int energyStored;
@@ -48,8 +52,6 @@ public class World : MonoBehaviour
 
     public BuildingScriptable selectedBuilding;
 
-    public DataMiner dataMiner;
-
     public GameState gameState;
 
     const float energyReduction = 1.01f;
@@ -64,14 +66,15 @@ public class World : MonoBehaviour
 
     private void Awake()
     {
+
         years = 0;
         starOutput = startingStarOutput; 
         energyStored = 0;
         metals = 10;
-        gameState = GameState.PLAYING;
+        gameState = GameState.STARTING;
+        //gameState = GameState.PLAYING;
         researchPoints = 0;
         dataMiningOn = false;
-        dataMiner = new DataMiner(this);
     }
 
 
@@ -121,6 +124,13 @@ public class World : MonoBehaviour
 
         unlockedBuildables.Add(SOFactory.I.GetBuilding("Wind"));
         unlockedBuildables.Add(SOFactory.I.GetBuilding("Miner"));
+
+        researchQueue.Add(SOFactory.I.GetBuilding("Solar"));
+        researchQueue.Add(SOFactory.I.GetBuilding("Battery"));
+
+
+        lore.Add("\"The Entropy's computers had to be reprogrammed 1,338 times to continue tracking the year (25.83^38 CE).\"");
+        lore.Add("\"A multi-generational starship sent coasting into the void. Forgotten. 1.4 million souls slowly turned to stone.\"");
 
     }
 
@@ -172,25 +182,26 @@ public class World : MonoBehaviour
     {
         while (true)
         {
-            if ( false )
+            if ( dataMiningOn && gameState == World.GameState.PLAYING )
             {
                 researchPoints++;
 
                 if ( researchPoints >= researchQueue[0].researchPoints)
                 {
+                    ui.ShowDialogBox("Data Block Recovered : " + researchQueue[0].title, lore[0], researchQueue[0].sprite);
                     AddNewTech(researchQueue[0]);
                     researchQueue.RemoveAt(0);
+                    lore.RemoveAt(0);
                     researchPoints = 0;                    
 
                     if (researchQueue.Count == 0)
                     {
                         dataMiningOn = false;
+                        ui.uiMineButton.gameObject.SetActive(false);
                         StopCoroutine(_dataMineUpdate);
                     }
                 }
-            }
-
-            dataMiner.Mine();
+            }         
 
             yield return new WaitForSeconds(_dataMineSpeed);
         }
@@ -206,63 +217,95 @@ public class World : MonoBehaviour
     {
         while (true)
         {
-            int mining = 0;
-            foreach (BuildingScriptable b in builtBuildings)
-                mining += b.producedMetals;
-
-            metalsAvailable -= mining;
-
-            if (metalsAvailable < 0)
+            if (gameState == World.GameState.PLAYING)
             {
-                metals += mining + metalsAvailable;
-                StopCoroutine(_minerUpdate);
-            }
+                int mining = 0;
 
-            metals += mining;
+                foreach (BuildingScriptable b in builtBuildings)
+                    mining += b.producedMetals;
+
+                metalsAvailable -= mining;
+
+                if (metalsAvailable < 0)
+                {
+                    metals += mining + metalsAvailable;
+                    StopCoroutine(_minerUpdate);
+                }
+
+                metals += mining;
+            }
 
             yield return new WaitForSeconds(_mineSpeed);
         }
+    }
+
+    public int GetStorageCapacity()
+    {
+        int capacity = 0;
+
+        foreach (BuildingScriptable b in builtBuildings)
+        {
+            capacity += b.storage;
+        }
+
+        return capacity;
     }
 
     IEnumerator AgeTheWorld()
     {
         while (true)
         {
-            years++;
-            starOutput = (int)(starOutput / energyReduction);
-
-            star.currentOutput = starOutput;
-
-            int production = 0;
-            int consumption = 0;
-            int capacity = 0;
-
-            foreach (BuildingScriptable b in builtBuildings) 
+            if (gameState == World.GameState.PLAYING)
             {
-                production += b.wattProduction;
-                consumption += b.wattConsumption;
-                capacity += b.storage;
-            }            
+                years++;
+                starOutput = (int)(starOutput / energyReduction);
 
-            if (production > starOutput ) production = starOutput;
+                star.currentOutput = starOutput;
 
-            cumulativeEnergyUse += production;
-            cumulativeEnergyOutput += starOutput;
+                int production = 0;
+                int consumption = 0;
+                int capacity = 0;
 
-            //calculate generation difference
-            energyChange = production - consumption;
+                foreach (BuildingScriptable b in builtBuildings)
+                {
+                    production += b.wattProduction;
+                    consumption += b.wattConsumption;
+                    capacity += b.storage;
+                }
 
-            //add or remove from storage
-            energyStored += energyChange;
+                if (dataMiningOn) consumption += 10;
 
-            if (energyStored > capacity)
-                energyStored = capacity;
+                if (production > starOutput) production = starOutput;
 
-            if ( energyStored < 0 && false)
-            {
-                energyStored = 0;
-                StopCoroutine(_worldUpdate);
-                gameState = GameState.GAMEOVER;
+                cumulativeEnergyUse += production;
+                cumulativeEnergyOutput += starOutput;
+
+                //calculate generation difference
+                energyChange = production - consumption;
+
+                //add or remove from storage
+                energyStored += energyChange;
+
+                if (energyStored > capacity)
+                    energyStored = capacity;
+
+                if (energyStored < 0)
+                {
+                    energyStored = 0;
+                    dataMiningOn = false;
+                    ui.SetMessage($"!! ALERT NO ENERGY !! RESERVES AT {bufferYears} !!");
+                    bufferYears--;
+                    if (bufferYears == 0)
+                    {
+                        energyStored = 0;
+                        StopCoroutine(_worldUpdate);
+                        gameState = GameState.GAMEOVER;
+                    }
+                }
+                else
+                {
+                    bufferYears = 10;
+                }
             }
 
             yield return new WaitForSeconds(_ageSpeed);

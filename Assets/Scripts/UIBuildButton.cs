@@ -10,14 +10,17 @@ public class UIBuildButton : MonoBehaviour
     public BuildingScriptable Building { 
         set { 
             _building = value; 
-            textTitle.text = _building.title; 
+            textTitle.text = _building.title + " ( "+ _building.requiredMetals +" metals)";
+            textDesc.text = _building.description;
             imageIcon.sprite = _building.sprite; 
         } 
         get { return _building; } 
     }
 
     public Text textTitle;
+    public Text textDesc;
     public Image imageIcon;
+
 
     public void OnClick()
     {

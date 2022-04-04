@@ -15,9 +15,10 @@ MonoBehaviour:
   sprite: {fileID: 21300000, guid: dd3f60e12f720f0469d4a0491dd2dd70, type: 3}
   title: Battery
   tile: {fileID: 11400000, guid: 53d82f451449dac4282e7c3c27ffad17, type: 2}
+  description: Adds 50kW of storage to the grid
   wattProduction: 0
   wattConsumption: 0
   storage: 50
   requiredMetals: 10
   producedMetals: 0
-  researchPoints: 10
+  researchPoints: 50

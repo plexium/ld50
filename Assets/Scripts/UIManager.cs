@@ -10,21 +10,32 @@ public class UIManager : MonoBehaviour
     public Text textEnergyStored;
     public Text textEnergyCapture;
     public Text textMetals;
+    public Text textShortMessage;
 
     public Text textGameOverSummary;
 
     public World world;
 
     public UIBuildButton uiBuildButtonPrefab;
-    
 
+    public GameObject gameStartPanel;
     public GameObject gameOverPanel;
     public GameObject statsPanel;
     public GameObject buildPanel;
 
     public UIPlotDetailManager plotDetailPanel;
     public UICursor uiCursor;
-    public UIDataMiningManager dataMiningPanel;
+    public UIDialogBox uiDialogPanel;
+    public UIMineButton uiMineButton;
+
+    public void StartGame()
+    {
+        world.gameState = World.GameState.PLAYING;
+        gameStartPanel.SetActive(false);
+        statsPanel.SetActive(true);
+        buildPanel.SetActive(true);
+        uiMineButton.gameObject.SetActive(true);
+    }
 
     public void StartPlacing(BuildingScriptable building)
     {
@@ -43,18 +54,6 @@ public class UIManager : MonoBehaviour
         plotDetailPanel.UninspectPlot();
         RefreshBuildables();
         world.OnBuildablesChange += RefreshBuildables;
-        dataMiningPanel.world = world;
-        dataMiningPanel.ui = this;
-    }
-
-    public void ShowDataMiningPanel()
-    {
-        dataMiningPanel.gameObject.SetActive(true);
-    }
-
-    public void HideDataMiningPanel()
-    {
-        dataMiningPanel.gameObject.SetActive(false);
     }
 
     void RefreshBuildables()
@@ -70,6 +69,21 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public void ShowDialogBox(string title, string message, Sprite icon = null)
+    {
+        world.gameState = World.GameState.PAUSED;
+        uiDialogPanel.title = title;
+        uiDialogPanel.message = message;
+        uiDialogPanel.icon = icon;
+        uiDialogPanel.gameObject.SetActive(true);
+    }
+
+    public void HideDialogBox()
+    {
+        world.gameState = World.GameState.PLAYING;
+        uiDialogPanel.gameObject.SetActive(false);
+    }
+
     public void Inspect(Plot plot)
     {
         plotDetailPanel.InsepctPlot(plot);
@@ -80,20 +94,32 @@ public class UIManager : MonoBehaviour
         plotDetailPanel.UninspectPlot();
     }
     
+    public void SetMessage(string message)
+    {
+        textShortMessage.text = message;
+        Invoke("ClearMessage", 3f);
+    }
+
+    public void ClearMessage()
+    {
+        textShortMessage.text = "";
+    }
+
     void Update()
     {
         if ( world.gameState == World.GameState.PLAYING)
         {
-            textMonths.text = world.years.ToString();
-            textStarOutput.text = world.starOutput.ToString() + "kW";
-            textEnergyStored.text = world.energyStored.ToString() + "kW";
-            textEnergyCapture.text = world.energyChange.ToString() + "kW";
-            textMetals.text = world.metals.ToString() + "t";
+            textMonths.text = "year: " + (world.years / 12).ToString();
+            textStarOutput.text = "star output: " + world.starOutput.ToString() + "kW";
+            textEnergyStored.text = $"energy [{world.energyStored}/{world.GetStorageCapacity()}]kW "+ ((world.energyChange<0)?"dis":"")  + $"charging at {world.energyChange}kW";
+            textMetals.text = "metals: " + world.metals.ToString();
         }
 
         if (world.gameState == World.GameState.GAMEOVER)
         {
-            textGameOverSummary.text = $"You lasted {world.years} months before running out of energy. You used { ((float) world.cumulativeEnergyUse / (float) world.cumulativeEnergyOutput).ToString("F2") }% of the last star.";
+            //ShowDialogBox("Game Over", $"You lasted {world.years} months before running out of energy. You used { ((float)world.cumulativeEnergyUse / (float)world.cumulativeEnergyOutput).ToString("F2") }% of the last star.");
+
+            textGameOverSummary.text = $"You lasted {world.years/12} years before running out of energy. You used { ((float) world.cumulativeEnergyUse / (float) world.cumulativeEnergyOutput).ToString("F2") }% of the last star.";
             gameOverPanel.SetActive(true);
             statsPanel.SetActive(false);
         }

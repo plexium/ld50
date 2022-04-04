@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Solar
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: 4e634d503cc42de49bebbb681a9a4e80, type: 3}
-  title: Solar
+  title: Solar Panel
   tile: {fileID: 11400000, guid: 4d02e1499ff5a6c49a36a3816e1e5460, type: 2}
+  description: Generates 10kW and stores 1kW
   wattProduction: 10
   wattConsumption: 0
   storage: 1
   requiredMetals: 3
   producedMetals: 0
-  researchPoints: 10
+  researchPoints: 25
